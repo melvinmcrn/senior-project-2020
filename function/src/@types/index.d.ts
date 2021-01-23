@@ -13,7 +13,7 @@ export interface ValidationResultTransaction {
   url: string;
   predicted_result?: ValidationResult;
   actual_result?: ValidationResult;
-  model_version: string;
+  model_version?: string;
   create_time: Date;
   update_time: Date;
 }

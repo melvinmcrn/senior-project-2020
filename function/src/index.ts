@@ -23,11 +23,12 @@ export const validation: HttpFunction = async (
       if (error instanceof ApiError) {
         error.handleError(res);
       } else {
+        console.error(error);
         res.status(500).send();
       }
     }
   } else {
     // incorrect request body
-    res.status(403).send('incorrect request body.');
+    res.status(400).send('incorrect request body.');
   }
 };
