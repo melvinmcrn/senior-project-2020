@@ -6,10 +6,6 @@ import {validateImage} from './controller';
 import {ValidationRequestBody} from './@types';
 import {ApiError} from './helpers/ApiError';
 
-export const helloWorld: HttpFunction = (req, res) => {
-  res.send('Hello, World!');
-};
-
 export const validation: HttpFunction = async (
   req: {body: ValidationRequestBody},
   res
