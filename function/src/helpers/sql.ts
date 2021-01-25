@@ -1,9 +1,9 @@
 import {OkPacket, escape, ConnectionConfig, createConnection} from 'mysql';
 import * as util from 'util';
 
-import {ValidationResultTransaction} from './@types';
-import {ApiError} from './helpers/ApiError';
-import {rowDataPacketToArary} from './helpers/helper';
+import {ValidationResultTransaction} from '../@types';
+import {ApiError} from './ApiError';
+import {rowDataPacketToArary} from './helper';
 
 const config: ConnectionConfig = {
   host: process.env.SQL_HOST,
