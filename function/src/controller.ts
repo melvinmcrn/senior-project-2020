@@ -38,6 +38,35 @@ const validateImage = async (imageUrl: string): Promise<string> => {
 
   // TODO: send the data to pubsub;
 
+  // Temporary send directly to MODEL
+  const modelResponse = await axios.post(
+    'http://35.240.176.38:8501/v1/models/default:predict',
+    {
+      instances: [
+        {
+          image_bytes: {
+            b64: resizedImage.toString('base64'),
+          },
+          key: imageHash,
+        },
+      ],
+    }
+  );
+
+  if (
+    !modelResponse.data ||
+    !modelResponse.data.predictions ||
+    modelResponse.data.predictions.length <= 0 ||
+    modelResponse.data.predictions[0].scores ||
+    modelResponse.data.predictions[0].scores.length <= 0
+  ) {
+    console.log('something is wrong with modelResponse', modelResponse.data);
+  }
+
+  console.log(modelResponse.data.predictions[0]);
+  console.log(modelResponse.data.predictions[0].scores);
+  console.log(modelResponse.data.predictions[0].labels);
+
   return imageHash;
 };
 
