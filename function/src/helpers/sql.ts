@@ -28,7 +28,7 @@ const makeDb = (config: ConnectionConfig) => {
     };
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while connecting to DB');
+    throw new ApiError(500, 'Error occur while connecting to DB.');
   }
 };
 
@@ -46,7 +46,7 @@ const getTransactionById = async (
     return rowDataPacketToArary(rows);
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while getting transaction by id');
+    throw new ApiError(500, 'Error occur while getting transaction by id.');
   }
 };
 
@@ -62,8 +62,28 @@ const createNewTransaction = async (id: string, url: string): Promise<void> => {
     }
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while creating new transaction');
+    throw new ApiError(500, 'Error occur while creating new transaction.');
   }
 };
 
-export {getTransactionById, createNewTransaction};
+const updateActualResultByImageId = async (
+  id: string,
+  predictedResult: string
+): Promise<void> => {
+  try {
+    const queryString = `UPDATE validation_result SET predicted_result = ${escape(
+      predictedResult
+    )}, actual_result = ${escape(predictedResult)}
+    WHERE id = ${escape(id)};`;
+    const query = db.query(queryString);
+    const result = <OkPacket>await query;
+    if (!result.affectedRows || result.affectedRows < 1) {
+      throw new Error();
+    }
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(500, 'Error occur while updating prediction result.');
+  }
+};
+
+export {getTransactionById, createNewTransaction, updateActualResultByImageId};
