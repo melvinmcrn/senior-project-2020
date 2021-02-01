@@ -2,17 +2,18 @@
   "name": "",
   "version": "0.0.0",
   "description": "",
-  "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "build/src"
   ],
   "license": "Apache-2.0",
   "keywords": [],
   "scripts": {
-    "start": "functions-framework --source=build/src/ --target=helloWorld",
+    "start": "functions-framework --source=build/src/ --target=validation",
     "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec npm run start\"",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gcloud functions deploy validation --entry-point validation --source=. --runtime nodejs10 --env-vars-file .env.yaml --trigger-http --allow-unauthenticated --region=asia-southeast2",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
@@ -24,10 +25,20 @@
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.7.1",
     "@types/express": "^4.17.11",
+    "@types/mysql": "^2.15.17",
     "@types/node": "^14.11.2",
+    "@types/sharp": "^0.27.1",
     "concurrently": "^5.3.0",
     "gts": "^3.1.0",
     "nodemon": "^2.0.7",
     "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^5.7.2",
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "file-type": "^16.2.0",
+    "mysql": "^2.18.1",
+    "sharp": "^0.27.0"
   }
 }
