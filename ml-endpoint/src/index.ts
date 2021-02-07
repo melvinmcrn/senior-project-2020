@@ -1,24 +1,38 @@
-console.log('Try npm run lint/fix!');
+/**
+ * TODO(developer): Uncomment these variables before running the sample.
+ */
+const SUBSCRIPTION_NAME = 'YOUR_SUBSCRIPTION_NAME';
+const TIMEOUT = 60;
 
-const longString =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut aliquet diam.';
+// Imports the Google Cloud client library
+const {PubSub} = require('@google-cloud/pubsub');
 
-const trailing = 'Semicolon';
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub();
 
-const why = 'am I tabbed?';
+function listenForMessages() {
+  // References an existing subscription
+  const subscription = pubSubClient.subscription(SUBSCRIPTION_NAME);
 
-export function doSomeStuff(
-  withThis: string,
-  andThat: string,
-  andThose: string[]
-) {
-  //function on one line
-  if (!andThose.length) {
-    return false;
-  }
-  console.log(withThis);
-  console.log(andThat);
-  console.dir(andThose);
-  return;
+  // Create an event handler to handle messages
+  let messageCount = 0;
+  const messageHandler = message => {
+    console.log(`Received message ${message.id}:`);
+    console.log(`\tData: ${message.data}`);
+    console.log(`\tAttributes: ${message.attributes}`);
+    messageCount += 1;
+
+    // "Ack" (acknowledge receipt of) the message
+    message.ack();
+  };
+
+  // Listen for new messages until timeout is hit
+  subscription.on('message', messageHandler);
+
+  setTimeout(() => {
+    subscription.removeListener('message', messageHandler);
+    console.log(`${messageCount} message(s) received.`);
+  }, TIMEOUT * 1000);
 }
-// TODO: more examples
+
+listenForMessages();
