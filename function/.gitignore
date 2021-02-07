@@ -30,4 +30,5 @@ benchmarks/graphs
 build/*
 .env
 .env.yaml
+.env.prod.yaml
 serviceAccountKey.json

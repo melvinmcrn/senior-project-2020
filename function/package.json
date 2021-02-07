@@ -10,10 +10,10 @@
   "license": "Apache-2.0",
   "keywords": [],
   "scripts": {
-    "start": "functions-framework --source=build/src/ --target=validation",
+    "start": "functions-framework --source=build/src/ --target=result",
     "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec npm run start\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gcloud functions deploy validation --entry-point validation --source=. --runtime nodejs10 --env-vars-file .env.yaml --trigger-http --allow-unauthenticated --region=asia-southeast2",
+    "deploy": "gcloud functions deploy result --entry-point result --source=. --runtime nodejs10 --env-vars-file .env.prod.yaml --trigger-http --allow-unauthenticated --region=asia-southeast2",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",

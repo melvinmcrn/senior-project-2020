@@ -2,7 +2,7 @@ require('dotenv').config();
 
 import type {HttpFunction} from '@google-cloud/functions-framework/build/src/functions';
 
-import {validateImage} from './controller';
+import {validateImage, getValidationResult} from './controller';
 import {ValidationRequestBody} from './@types';
 import {ApiError} from './helpers/ApiError';
 
@@ -26,5 +26,26 @@ export const validation: HttpFunction = async (
   } else {
     // incorrect request body
     res.status(400).send('incorrect request body.');
+  }
+};
+
+export const result: HttpFunction = async (req, res) => {
+  if (req.query && req.query.image_id) {
+    // correct request format
+    try {
+      const imageId = req.query.image_id.toString();
+      const result = await getValidationResult(imageId);
+      res.status(200).json({result});
+    } catch (error) {
+      if (error instanceof ApiError) {
+        error.handleError(res);
+      } else {
+        console.error(error);
+        res.status(500).send();
+      }
+    }
+  } else {
+    // incorrect request
+    res.status(400).send('incorrect request query string.');
   }
 };

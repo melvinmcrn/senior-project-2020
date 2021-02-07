@@ -10,6 +10,7 @@ import {
   updateActualResultByImageId,
 } from './helpers/sql';
 import {uploadImageToStorage} from './helpers/storage';
+import {ValidationResult} from './@types';
 
 const validateImage = async (imageUrl: string): Promise<string> => {
   // get image from URL in the form of Buffer
@@ -94,6 +95,18 @@ const validateImage = async (imageUrl: string): Promise<string> => {
   return imageHash;
 };
 
+const getValidationResult = async (
+  imageId: string
+): Promise<ValidationResult | null> => {
+  const transaction = await getTransactionById(imageId);
+
+  if (transaction.length <= 0) {
+    throw new ApiError(404, 'Image Id not found.');
+  }
+
+  return transaction[0].actual_result || null;
+};
+
 const getImageBufferFromUrl = async (
   imageUrl: string
 ): Promise<{buffer: Buffer; ext: string}> => {
@@ -125,4 +138,4 @@ const getImageBufferFromUrl = async (
   }
 };
 
-export {validateImage};
+export {validateImage, getValidationResult};
