@@ -5,6 +5,8 @@ import {ValidationResultTransaction} from '../@types';
 import {ApiError} from './ApiError';
 import {rowDataPacketToArary} from './helper';
 
+// when deploy, change from "host" to "socketPath"
+
 const config: ConnectionConfig = {
   host: process.env.SQL_HOST,
   user: process.env.SQL_USER,

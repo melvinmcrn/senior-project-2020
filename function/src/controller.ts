@@ -4,13 +4,10 @@ import * as FileType from 'file-type';
 
 import {ApiError} from './helpers/ApiError';
 import {createHash} from './helpers/helper';
-import {
-  createNewTransaction,
-  getTransactionById,
-  updateActualResultByImageId,
-} from './helpers/sql';
+import {createNewTransaction, getTransactionById} from './helpers/sql';
 import {uploadImageToStorage} from './helpers/storage';
 import {ValidationResult} from './@types';
+import {publishMessage} from './helpers/pubsub';
 
 const validateImage = async (imageUrl: string): Promise<string> => {
   // get image from URL in the form of Buffer
@@ -42,55 +39,15 @@ const validateImage = async (imageUrl: string): Promise<string> => {
   await createNewTransaction(imageHash, savedUrl);
 
   // TODO: send the data to pubsub;
+  const messageToPublish = {
+    imageId: imageHash,
+    imageUrl: savedUrl,
+  };
 
-  // Temporary send directly to MODEL
-  const modelResponse = await axios.post(process.env.MODEL_URL || '', {
-    instances: [
-      {
-        image_bytes: {
-          b64: resizedImage.toString('base64'),
-        },
-        key: imageHash,
-      },
-    ],
-  });
-
-  if (
-    !modelResponse.data ||
-    !modelResponse.data.predictions ||
-    modelResponse.data.predictions.length <= 0 ||
-    !modelResponse.data.predictions[0].scores ||
-    modelResponse.data.predictions[0].scores.length <= 0
-  ) {
-    console.log('something is wrong with modelResponse', modelResponse.data);
-    console.log(modelResponse.data.predictions[0]);
-  }
-
-  console.log(modelResponse.data.predictions[0]);
-  // console.log(modelResponse.data.predictions[0].scores);
-  // console.log(modelResponse.data.predictions[0].labels);
-
-  let banProb: number;
-
-  if (modelResponse.data.predictions[0].labels[0] === 'ban') {
-    banProb = modelResponse.data.predictions[0].scores[0];
-  } else {
-    banProb = modelResponse.data.predictions[0].scores[1];
-  }
-
-  let predictionResult: string;
-
-  // classify by the probability
-  if (banProb >= 0.9) {
-    predictionResult = 'BAN';
-  } else if (banProb < 0.9 && banProb >= 0.6) {
-    predictionResult = 'UNCERTAIN';
-  } else {
-    predictionResult = 'PASS';
-  }
-
-  // update result to DB
-  await updateActualResultByImageId(imageHash, predictionResult);
+  await publishMessage(
+    process.env.PUBSUB_TOPIC_NAME || '',
+    JSON.stringify(messageToPublish)
+  );
 
   return imageHash;
 };
