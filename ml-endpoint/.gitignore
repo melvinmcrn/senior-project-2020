@@ -40,4 +40,8 @@ dist/**/*
 # ignore yarn.lock
 yarn.lock
 
-build
+build/*
+.env
+.env.yaml
+.env.prod.yaml
+serviceAccountKey.json
