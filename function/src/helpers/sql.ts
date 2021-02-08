@@ -8,7 +8,7 @@ import {rowDataPacketToArary} from './helper';
 // when deploy, change from "host" to "socketPath"
 
 const config: ConnectionConfig = {
-  host: process.env.SQL_HOST,
+  socketPath: process.env.SQL_HOST,
   user: process.env.SQL_USER,
   password: process.env.SQL_PASS,
   database: process.env.SQL_DATABASE,

@@ -41,7 +41,7 @@ const validateImage = async (imageUrl: string): Promise<string> => {
   // TODO: send the data to pubsub;
   const messageToPublish = {
     imageId: imageHash,
-    imageUrl: savedUrl,
+    fileName: `${imageHash}.${imageExt}`,
   };
 
   await publishMessage(

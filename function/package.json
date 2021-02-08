@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@google-cloud/pubsub": "^2.8.0",
-    "@google-cloud/storage": "^5.7.2",
+    "@google-cloud/storage": "^5.7.4",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "file-type": "^16.2.0",
