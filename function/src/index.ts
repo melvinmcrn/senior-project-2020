@@ -57,7 +57,7 @@ export const result: HttpFunction = async (req, res) => {
 export const uncertain_list: HttpFunction = async (req, res) => {
   try {
     const result = await getUncertainImage();
-    res.status(200).json({result});
+    res.status(200).json({images: result});
   } catch (error) {
     if (error instanceof ApiError) {
       error.handleError(res);
