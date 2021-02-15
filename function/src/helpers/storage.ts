@@ -3,7 +3,7 @@ import {ApiError} from './ApiError';
 
 const storage = new Storage({
   keyFilename: 'serviceAccountKey.json',
-  projectId: 'poc-innovation-iot',
+  projectId: process.env.PROJECT_ID,
 });
 const bucketName = process.env.BUCKET_NAME || '';
 
