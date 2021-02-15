@@ -70,12 +70,12 @@ const createNewTransaction = async (id: string, url: string): Promise<void> => {
 
 const updateActualResultByImageId = async (
   id: string,
-  predictedResult: string
+  actualResult: string
 ): Promise<void> => {
   try {
-    const queryString = `UPDATE validation_result SET predicted_result = ${escape(
-      predictedResult
-    )}, actual_result = ${escape(predictedResult)}
+    const queryString = `UPDATE validation_result SET actual_result = ${escape(
+      actualResult
+    )}
     WHERE id = ${escape(id)};`;
     const query = db.query(queryString);
     const result = <OkPacket>await query;
@@ -88,4 +88,22 @@ const updateActualResultByImageId = async (
   }
 };
 
-export {getTransactionById, createNewTransaction, updateActualResultByImageId};
+const getUncertainList = async (): Promise<ValidationResultTransaction[]> => {
+  try {
+    const queryString =
+      'SELECT * FROM validation_result WHERE actual_result = UNCERTAIN';
+    const query = db.query(queryString);
+    const rows = await query;
+    return rowDataPacketToArary(rows);
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(500, 'Error occur while getting uncertain list.');
+  }
+};
+
+export {
+  getTransactionById,
+  createNewTransaction,
+  updateActualResultByImageId,
+  getUncertainList,
+};

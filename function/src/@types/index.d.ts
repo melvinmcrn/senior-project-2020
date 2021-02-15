@@ -17,3 +17,8 @@ export interface ValidationResultTransaction {
   create_time: Date;
   update_time: Date;
 }
+
+export interface UncertainImageList {
+  imageId: string;
+  imageUrl: string;
+}
