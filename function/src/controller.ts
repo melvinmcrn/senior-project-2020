@@ -71,7 +71,7 @@ const getImageBufferFromUrl = async (
     const config: AxiosRequestConfig = {
       responseType: 'arraybuffer',
     };
-    const imageResponse = await axios.get(imageUrl, config);
+    const imageResponse = await axios.get(encodeURI(imageUrl), config);
 
     if (imageResponse.status !== 200) {
       throw new ApiError(
