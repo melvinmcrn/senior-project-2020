@@ -5,16 +5,21 @@ import {ValidationResultTransaction} from '../@types';
 import {ApiError} from './ApiError';
 import {rowDataPacketToArary} from './helper';
 
-// when deploy, change from "host" to "socketPath"
-
 const config: ConnectionConfig = {
-  socketPath: process.env.SQL_HOST,
   user: process.env.SQL_USER,
   password: process.env.SQL_PASS,
   database: process.env.SQL_DATABASE,
   charset: 'utf8',
   timezone: 'utc',
 };
+
+if (process.env.SQL_HOST) {
+  config.host = process.env.SQL_HOST;
+} else if (process.env.SQL_SOCKET_PATH) {
+  config.socketPath = process.env.SQL_SOCKET_PATH;
+}
+
+console.log('SQL config: ', config);
 
 const makeDb = (config: ConnectionConfig) => {
   try {
@@ -70,12 +75,12 @@ const createNewTransaction = async (id: string, url: string): Promise<void> => {
 
 const updateActualResultByImageId = async (
   id: string,
-  predictedResult: string
+  actualResult: string
 ): Promise<void> => {
   try {
-    const queryString = `UPDATE validation_result SET predicted_result = ${escape(
-      predictedResult
-    )}, actual_result = ${escape(predictedResult)}
+    const queryString = `UPDATE validation_result SET actual_result = ${escape(
+      actualResult
+    )}
     WHERE id = ${escape(id)};`;
     const query = db.query(queryString);
     const result = <OkPacket>await query;
@@ -88,4 +93,22 @@ const updateActualResultByImageId = async (
   }
 };
 
-export {getTransactionById, createNewTransaction, updateActualResultByImageId};
+const getUncertainList = async (): Promise<ValidationResultTransaction[]> => {
+  try {
+    const queryString =
+      'SELECT * FROM validation_result WHERE actual_result = "UNCERTAIN"';
+    const query = db.query(queryString);
+    const rows = await query;
+    return rowDataPacketToArary(rows);
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(500, 'Error occur while getting uncertain list.');
+  }
+};
+
+export {
+  getTransactionById,
+  createNewTransaction,
+  updateActualResultByImageId,
+  getUncertainList,
+};

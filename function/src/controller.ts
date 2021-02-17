@@ -4,9 +4,13 @@ import * as FileType from 'file-type';
 
 import {ApiError} from './helpers/ApiError';
 import {createHash} from './helpers/helper';
-import {createNewTransaction, getTransactionById} from './helpers/sql';
+import {
+  createNewTransaction,
+  getTransactionById,
+  getUncertainList,
+} from './helpers/sql';
 import {uploadImageToStorage} from './helpers/storage';
-import {ValidationResult} from './@types';
+import {UncertainImageList, ValidationResult} from './@types';
 import {publishMessage} from './helpers/pubsub';
 
 const validateImage = async (imageUrl: string): Promise<string> => {
@@ -64,6 +68,16 @@ const getValidationResult = async (
   return transaction[0].actual_result || null;
 };
 
+const getUncertainImage = async (): Promise<UncertainImageList[]> => {
+  const result = await getUncertainList();
+  return result.map(item => {
+    return {
+      imageId: item.id,
+      imageUrl: item.url,
+    };
+  });
+};
+
 const getImageBufferFromUrl = async (
   imageUrl: string
 ): Promise<{buffer: Buffer; ext: string}> => {
@@ -95,4 +109,4 @@ const getImageBufferFromUrl = async (
   }
 };
 
-export {validateImage, getValidationResult};
+export {validateImage, getValidationResult, getUncertainImage};
