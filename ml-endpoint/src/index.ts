@@ -22,7 +22,7 @@ async function synchronousPull() {
   // Pub/Sub may return fewer than the number specified.
   const request = {
     subscription: formattedSubscription,
-    maxMessages: 1,
+    maxMessages: 10,
   };
 
   // The subscriber pulls a specified number of messages.
