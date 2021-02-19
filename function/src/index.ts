@@ -6,8 +6,9 @@ import {
   validateImage,
   getValidationResult,
   getUncertainImage,
+  updateUncertainImage,
 } from './controller';
-import {ValidationRequestBody} from './@types';
+import {UpdateUncertainRequestBody, ValidationRequestBody} from './@types';
 import {ApiError} from './helpers/ApiError';
 
 export const validation: HttpFunction = async (
@@ -65,5 +66,29 @@ export const uncertain_list: HttpFunction = async (req, res) => {
       console.error(error);
       res.status(500).send();
     }
+  }
+};
+
+export const update_uncertain: HttpFunction = async (
+  req: {body: UpdateUncertainRequestBody},
+  res
+) => {
+  if (req.body && req.body.data) {
+    // correct body
+    try {
+      const data = req.body.data;
+      const result = await updateUncertainImage(data);
+      res.status(200).json(result);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        error.handleError(res);
+      } else {
+        console.error(error);
+        res.status(500).send();
+      }
+    }
+  } else {
+    // incorrect request body
+    res.status(400).send('incorrect request body.');
   }
 };

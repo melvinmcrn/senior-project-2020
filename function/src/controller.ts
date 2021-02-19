@@ -8,9 +8,15 @@ import {
   createNewTransaction,
   getTransactionById,
   getUncertainList,
+  updateActualResultByImageId,
 } from './helpers/sql';
 import {uploadImageToStorage} from './helpers/storage';
-import {UncertainImageList, ValidationResult} from './@types';
+import {
+  UncertainImageList,
+  UpdateUncertainData,
+  UpdateUncertainResult,
+  ValidationResult,
+} from './@types';
 import {publishMessage} from './helpers/pubsub';
 
 const validateImage = async (imageUrl: string): Promise<string> => {
@@ -78,6 +84,25 @@ const getUncertainImage = async (): Promise<UncertainImageList[]> => {
   });
 };
 
+const updateUncertainImage = async (
+  data: UpdateUncertainData[]
+): Promise<UpdateUncertainResult> => {
+  const success_images: string[] = [];
+  const failed_images: string[] = [];
+  for (const {imageId, status} of data) {
+    try {
+      await updateActualResultByImageId(imageId, status);
+      success_images.push(imageId);
+    } catch (error) {
+      failed_images.push(imageId);
+    }
+  }
+  return {
+    success_images,
+    failed_images,
+  };
+};
+
 const getImageBufferFromUrl = async (
   imageUrl: string
 ): Promise<{buffer: Buffer; ext: string}> => {
@@ -109,4 +134,9 @@ const getImageBufferFromUrl = async (
   }
 };
 
-export {validateImage, getValidationResult, getUncertainImage};
+export {
+  validateImage,
+  getValidationResult,
+  getUncertainImage,
+  updateUncertainImage,
+};

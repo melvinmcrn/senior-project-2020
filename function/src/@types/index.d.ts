@@ -2,6 +2,15 @@ export interface ValidationRequestBody {
   image_url: string;
 }
 
+export interface UpdateUncertainData {
+  imageId: string;
+  status: ValidationResult;
+}
+
+export interface UpdateUncertainRequestBody {
+  data: UpdateUncertainData[];
+}
+
 export enum ValidationResult {
   pass = 'PASS',
   ban = 'BAN',
@@ -21,4 +30,9 @@ export interface ValidationResultTransaction {
 export interface UncertainImageList {
   imageId: string;
   imageUrl: string;
+}
+
+export interface UpdateUncertainResult {
+  success_images: string[];
+  failed_images: string[];
 }

@@ -1,7 +1,7 @@
 import {OkPacket, escape, ConnectionConfig, createConnection} from 'mysql';
 import * as util from 'util';
 
-import {ValidationResultTransaction} from '../@types';
+import {ValidationResult, ValidationResultTransaction} from '../@types';
 import {ApiError} from './ApiError';
 import {rowDataPacketToArary} from './helper';
 
@@ -75,7 +75,7 @@ const createNewTransaction = async (id: string, url: string): Promise<void> => {
 
 const updateActualResultByImageId = async (
   id: string,
-  actualResult: string
+  actualResult: ValidationResult
 ): Promise<void> => {
   try {
     const queryString = `UPDATE validation_result SET actual_result = ${escape(
