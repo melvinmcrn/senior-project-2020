@@ -14,6 +14,7 @@ const uploadImageToStorage = async (
   try {
     const file = storage.bucket(bucketName).file(`product_image/${fileName}`);
     await file.save(image);
+    await file.makePublic();
     return file.publicUrl();
   } catch (error) {
     console.error(error);
