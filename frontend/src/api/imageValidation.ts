@@ -5,7 +5,7 @@ interface ValidationResponseData {
 }
 
 interface ResultResponseData {
-  result: null | "PASS" | "BANNED" | "UNCERTAIN";
+  result: null | "PASS" | "BAN" | "UNCERTAIN";
 }
 
 interface GetUncertainResponseData {
@@ -16,10 +16,8 @@ interface GetUncertainResponseData {
 }
 
 interface UpdateUncertainRequestData {
-  data: {
-    image_id: string;
-    status: "PASS" | "BANNED";
-  }[];
+  imageId: string;
+  status: string;
 }
 
 interface UpdateUncertainResponseData {
@@ -58,21 +56,23 @@ export const getUncertainImage = () => {
   return httpClient
     .get<GetUncertainResponseData>("/uncertain_list")
     .then((response) => {
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.images) {
         return response.data.images;
       }
+      throw Error("Response has no data");
     });
 };
 
-export const updateUncertainImage = (data: UpdateUncertainRequestData) => {
+export const updateUncertainImage = (data: UpdateUncertainRequestData[]) => {
   const body = {
     data,
   };
   return httpClient
-    .patch<UpdateUncertainResponseData>("/update_uncertain", body)
+    .post<UpdateUncertainResponseData>("/update_uncertain", body)
     .then((response) => {
       if (response.status === 200) {
         return response.data;
       }
+      throw Error("Response has no data");
     });
 };
