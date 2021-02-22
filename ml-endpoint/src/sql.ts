@@ -4,13 +4,20 @@ import * as util from 'util';
 // when deploy, change from "host" to "socketPath"
 
 const config: ConnectionConfig = {
-  host: process.env.SQL_HOST,
   user: process.env.SQL_USER,
   password: process.env.SQL_PASS,
   database: process.env.SQL_DATABASE,
   charset: 'utf8',
   timezone: 'utc',
 };
+
+if (process.env.SQL_HOST) {
+  config.host = process.env.SQL_HOST;
+} else if (process.env.SQL_SOCKET_PATH) {
+  config.socketPath = process.env.SQL_SOCKET_PATH;
+}
+
+console.log('SQL config: ', config);
 
 const makeDb = (config: ConnectionConfig) => {
   try {
