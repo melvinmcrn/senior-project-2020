@@ -34,9 +34,10 @@ export const validateImage = (image_url: string) => {
   return httpClient
     .post<ValidationResponseData>("/validation", data)
     .then((response) => {
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.image_id) {
         return response.data.image_id;
       }
+      throw Error("Response has no data");
     });
 };
 

@@ -1,14 +1,29 @@
 import React, { useCallback, useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
 import { validateImage } from "../api/imageValidation";
 
 const Validation: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>("");
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await validateImage(imageUrl);
+      try {
+        setIsError(false);
+        setAlertMessage("");
+        const imageId = await validateImage(imageUrl);
+        setAlertMessage("ImageId: " + imageId);
+      } catch (error) {
+        setIsError(true);
+        console.error(error);
+        if (error.response) {
+          setAlertMessage(error.response.data.message);
+        } else {
+          setAlertMessage("Something went wrong");
+        }
+      }
     },
     [imageUrl]
   );
@@ -23,7 +38,7 @@ const Validation: React.FC = () => {
       <Row>
         <Col>
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formBasicEmail">
+            <Form.Group controlId="formImageUrl">
               <Form.Label>Image URL</Form.Label>
               <Form.Control
                 required
@@ -32,12 +47,22 @@ const Validation: React.FC = () => {
                 value={imageUrl}
                 onChange={({ target }) => setImageUrl(target.value)}
               />
+              <Form.Group controlId="formSubmitButton">
+                <Button variant="primary" type="submit">
+                  Send
+                </Button>
+              </Form.Group>
             </Form.Group>
-
-            <Button variant="primary" type="submit">
-              Send
-            </Button>
           </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {alertMessage ? (
+            <Alert variant={isError ? "danger" : "primary"}>
+              {alertMessage}
+            </Alert>
+          ) : null}
         </Col>
       </Row>
     </div>
