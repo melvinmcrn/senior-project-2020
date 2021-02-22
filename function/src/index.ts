@@ -15,7 +15,7 @@ export const validation: HttpFunction = async (
   req: {body: ValidationRequestBody; method: string},
   res
 ) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') {
     // Send response to OPTIONS requests
     res.set('Access-Control-Allow-Methods', 'POST');
@@ -44,7 +44,7 @@ export const validation: HttpFunction = async (
 };
 
 export const result: HttpFunction = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') {
     // Send response to OPTIONS requests
     res.set('Access-Control-Allow-Methods', 'POST');
@@ -74,7 +74,7 @@ export const result: HttpFunction = async (req, res) => {
 };
 
 export const uncertain_list: HttpFunction = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') {
     // Send response to OPTIONS requests
     res.set('Access-Control-Allow-Methods', 'POST');
@@ -100,7 +100,7 @@ export const update_uncertain: HttpFunction = async (
   req: {body: UpdateUncertainRequestBody; method: string},
   res
 ) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') {
     // Send response to OPTIONS requests
     res.set('Access-Control-Allow-Methods', 'POST');
