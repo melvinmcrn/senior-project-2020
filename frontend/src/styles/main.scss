@@ -1,0 +1,13 @@
+.common-content-box {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  background-color: rgb(242, 242, 242);
+  border-radius: 5px;
+  padding: 30px;
+}
