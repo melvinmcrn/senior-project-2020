@@ -12,12 +12,12 @@ const subClient = new v1.SubscriberClient({
   keyFilename: 'serviceAccountKey.json',
 });
 
-async function synchronousPull() {
-  const formattedSubscription = subClient.subscriptionPath(
-    projectId,
-    subscriptionName
-  );
+const formattedSubscription = subClient.subscriptionPath(
+  projectId,
+  subscriptionName
+);
 
+async function synchronousPull() {
   // The maximum number of messages returned for this request.
   // Pub/Sub may return fewer than the number specified.
   const request = {
@@ -34,17 +34,33 @@ async function synchronousPull() {
   }
 
   // Process the messages.
-  const ackIds = [];
-  const messages: {
-    imageId: string;
-    fileName: string;
-  }[] = [];
+  // const ackIds = [];
+  // const messages: {
+  //   imageId: string;
+  //   fileName: string;
+  // }[] = [];
   for (const message of response.receivedMessages) {
     console.log(`Received message: ${message.message.data}`);
-    ackIds.push(message.ackId);
-    messages.push(JSON.parse(message.message.data));
+    // ackIds.push(message.ackId);
+    // messages.push(JSON.parse(message.message.data));
   }
 
+  // if (ackIds.length !== 0) {
+  //   // Acknowledge all of the messages. You could also ackknowledge
+  //   // these individually, but this is more efficient.
+  //   const ackRequest = {
+  //     subscription: formattedSubscription,
+  //     ackIds: ackIds,
+  //   };
+
+  //   await subClient.acknowledge(ackRequest);
+  // }
+
+  console.log('Done.');
+  return response.receivedMessages;
+}
+
+async function ackMessage(ackIds: string[]) {
   if (ackIds.length !== 0) {
     // Acknowledge all of the messages. You could also ackknowledge
     // these individually, but this is more efficient.
@@ -57,7 +73,6 @@ async function synchronousPull() {
   }
 
   console.log('Done.');
-  return messages;
 }
 
 async function predictImage(imageId: string, fileName: string) {
@@ -147,10 +162,21 @@ async function main() {
       } else {
         // HAVE MESSAGE
         console.log('have message');
+        const ackIds: string[] = [];
         for (const message of messages) {
-          await predictImage(message.imageId, message.fileName);
-          console.log(message);
+          try {
+            const messageData: {
+              imageId: string;
+              fileName: string;
+            } = JSON.parse(message.message.data);
+            console.log(messageData);
+            await predictImage(messageData.imageId, messageData.fileName);
+            ackIds.push(message.ackId);
+          } catch (error) {
+            console.error(error);
+          }
         }
+        ackMessage(ackIds);
       }
     } catch (error) {
       console.log(error);
