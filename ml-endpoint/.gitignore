@@ -45,3 +45,5 @@ build/*
 .env.yaml
 .env.prod.yaml
 serviceAccountKey.json
+
+.DS_Store

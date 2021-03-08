@@ -54,8 +54,8 @@ const updateActualResultByImageId = async (
       throw new Error();
     }
   } catch (error) {
-    console.error(error);
-    throw new Error('Error occur while updating prediction result.');
+    console.error('Error occur while updating prediction result.');
+    throw error;
   }
 };
 

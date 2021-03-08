@@ -102,7 +102,7 @@ async function predictImage(imageId: string, fileName: string) {
     console.log('Send image to model done.');
   } catch (error) {
     console.error('something is wrong while sending image to model');
-    console.error(error);
+    throw error;
   }
 
   if (
@@ -113,8 +113,8 @@ async function predictImage(imageId: string, fileName: string) {
     !modelResponse.data.predictions[0].scores ||
     modelResponse.data.predictions[0].scores.length <= 0
   ) {
-    console.log('something is wrong with modelResponse', modelResponse.data);
-    console.log(modelResponse.data.predictions[0]);
+    console.error('something is wrong with modelResponse', modelResponse.data);
+    throw Error(modelResponse.data.predictions[0]);
   }
 
   console.log(modelResponse.data.predictions[0]);
@@ -179,7 +179,7 @@ async function main() {
         ackMessage(ackIds);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     isPaused = false;
   }, 5000);
