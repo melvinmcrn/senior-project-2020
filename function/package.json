@@ -10,10 +10,10 @@
   "license": "Apache-2.0",
   "keywords": [],
   "scripts": {
-    "start": "functions-framework --source=build/src/ --target=update_uncertain",
+    "start": "functions-framework --source=build/src/ --target=validation",
     "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec npm run start\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gcloud functions deploy update_uncertain --entry-point update_uncertain --source=. --runtime nodejs10 --env-vars-file .env.prod.yaml --trigger-http --allow-unauthenticated --region=asia-southeast2",
+    "deploy": "gcloud functions deploy validation --entry-point validation --source=. --runtime nodejs10 --env-vars-file .env.prod.yaml --trigger-http --allow-unauthenticated --region=asia-southeast2 --vpc-connector projects/poc-innovation-iot/locations/asia-southeast2/connectors/chulaxktb-default-vpc",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",

@@ -4,47 +4,50 @@ import {RedisClient} from 'redis';
 const REDISHOST = process.env.REDIS_HOST || 'localhost';
 const REDISPORT = 6379;
 
-const makeRedisClient = () => {
-  const client = new RedisClient({
-    host: REDISHOST,
-    port: REDISPORT,
-  });
+const client = new RedisClient({
+  host: REDISHOST,
+  port: REDISPORT,
+});
 
-  client.on('error', err => console.error('ERR:REDIS:', err));
+client.on('error', err => console.error('ERR:REDIS:', err));
 
-  return {
-    ...client,
-    get: util.promisify(client.get),
-    set(key: string, value: string) {
-      return util.promisify(client.set).call(client, key, value);
-    },
-  };
-};
-
-const redisClient = makeRedisClient();
+const redisGet = util.promisify(client.get).bind(client);
+const redisSet = util.promisify(client.set).bind(client);
 
 export const setValueByKey = async (
   key: string,
   value: string
 ): Promise<void> => {
   try {
-    await redisClient.set(key, value);
+    console.log('Checking redisClient...');
+    if (!redisSet) {
+      throw Error('[REDIS] redisClient set not found.');
+    }
+    console.log('redisClient found! setting value to redisClient.');
+    await redisSet(key, value);
+    console.log('set value done! with key=', key, 'value=', value);
   } catch (error) {
     console.error('[REDIS ERROR: setValueByKey]');
     console.error(error);
   }
 };
 
-export const getValueByKey = async (key: string): Promise<string> => {
+export const isKeyExist = async (key: string): Promise<boolean> => {
   try {
-    const value = await redisClient.get(key);
+    console.log('Checking redisClient...');
+    if (!redisGet) {
+      throw Error('[REDIS] redisClient get not found.');
+    }
+    console.log('redisClient found! getting value from redisClient.');
+    const value = await redisGet(key);
+    console.log('get value done with value =', value);
     if (!value) {
-      return '';
+      return false;
     }
 
-    return value;
+    return true;
   } catch (error) {
-    console.error('[REDIS ERROR: setValueByKey]');
+    console.error('[REDIS ERROR: isKeyExist]');
     throw error;
   }
 };

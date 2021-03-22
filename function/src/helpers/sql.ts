@@ -57,7 +57,10 @@ const getTransactionById = async (
   }
 };
 
-const createNewTransaction = async (id: string, url: string): Promise<void> => {
+const createNewTransaction = async (
+  id: string,
+  url: string
+): Promise<boolean> => {
   try {
     const queryString = `INSERT INTO validation_result (id, url) VALUES (${escape(
       id
@@ -67,7 +70,11 @@ const createNewTransaction = async (id: string, url: string): Promise<void> => {
     if (!result.affectedRows || result.affectedRows < 1) {
       throw new Error();
     }
+    return true;
   } catch (error) {
+    if (error.code && error.code === 'ER_DUP_ENTRY') {
+      return false;
+    }
     console.error(error);
     throw new ApiError(500, 'Error occur while creating new transaction.');
   }
