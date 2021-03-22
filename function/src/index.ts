@@ -10,6 +10,8 @@ import {
 } from './controller';
 import {UpdateUncertainRequestBody, ValidationRequestBody} from './@types';
 import {ApiError} from './helpers/ApiError';
+import {clearCache} from './helpers/redis';
+import {truncateTable} from './helpers/sql';
 
 export const validation: HttpFunction = async (
   req: {body: ValidationRequestBody; method: string},
@@ -125,6 +127,21 @@ export const update_uncertain: HttpFunction = async (
     } else {
       // incorrect request body
       res.status(400).send('incorrect request body.');
+    }
+  }
+};
+
+export const clear_db: HttpFunction = async (req, res) => {
+  try {
+    await clearCache();
+    await truncateTable();
+    res.status(200).send();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      error.handleError(res);
+    } else {
+      console.error(error);
+      res.status(500).send();
     }
   }
 };

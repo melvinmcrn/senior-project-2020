@@ -18,7 +18,7 @@ const uploadImageToStorage = async (
     return file.publicUrl();
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'cannot save image');
+    throw new ApiError(520, 'cannot save image');
   }
 };
 

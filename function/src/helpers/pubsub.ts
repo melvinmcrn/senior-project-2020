@@ -21,7 +21,7 @@ const publishMessage = async (topicName: string, data: string) => {
       `Received error while publishing message with data: ${data} to topic: ${topicName}.`
     );
     console.error(error);
-    throw new ApiError(500, 'Error while publishing message.');
+    throw new ApiError(510, 'Error while publishing message.');
   }
 };
 

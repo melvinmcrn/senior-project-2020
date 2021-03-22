@@ -1,4 +1,4 @@
-import * as util from 'util';
+import {promisify} from 'util';
 import {RedisClient} from 'redis';
 
 const REDISHOST = process.env.REDIS_HOST || 'localhost';
@@ -11,8 +11,9 @@ const client = new RedisClient({
 
 client.on('error', err => console.error('ERR:REDIS:', err));
 
-const redisGet = util.promisify(client.get).bind(client);
-const redisSet = util.promisify(client.set).bind(client);
+const redisGet = promisify(client.get).bind(client);
+const redisSet = promisify(client.setex).bind(client);
+const redisFlushAll = promisify(client.flushall).bind(client);
 
 export const setValueByKey = async (
   key: string,
@@ -24,7 +25,7 @@ export const setValueByKey = async (
       throw Error('[REDIS] redisClient set not found.');
     }
     console.log('redisClient found! setting value to redisClient.');
-    await redisSet(key, value);
+    await redisSet(key, 6 * 3600, value);
     console.log('set value done! with key=', key, 'value=', value);
   } catch (error) {
     console.error('[REDIS ERROR: setValueByKey]');
@@ -48,6 +49,15 @@ export const isKeyExist = async (key: string): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('[REDIS ERROR: isKeyExist]');
+    throw error;
+  }
+};
+
+export const clearCache = async () => {
+  try {
+    await redisFlushAll();
+  } catch (error) {
+    console.error('[REDIS ERROR: clearCache]');
     throw error;
   }
 };

@@ -35,7 +35,7 @@ const makeDb = (config: ConnectionConfig) => {
     };
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while connecting to DB.');
+    throw new ApiError(503, 'Error occur while connecting to DB.');
   }
 };
 
@@ -53,7 +53,7 @@ const getTransactionById = async (
     return rowDataPacketToArary(rows);
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while getting transaction by id.');
+    throw new ApiError(504, 'Error occur while getting transaction by id.');
   }
 };
 
@@ -76,7 +76,7 @@ const createNewTransaction = async (
       return false;
     }
     console.error(error);
-    throw new ApiError(500, 'Error occur while creating new transaction.');
+    throw new ApiError(505, 'Error occur while creating new transaction.');
   }
 };
 
@@ -96,7 +96,7 @@ const updateActualResultByImageId = async (
     }
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while updating prediction result.');
+    throw new ApiError(506, 'Error occur while updating prediction result.');
   }
 };
 
@@ -109,7 +109,18 @@ const getUncertainList = async (): Promise<ValidationResultTransaction[]> => {
     return rowDataPacketToArary(rows);
   } catch (error) {
     console.error(error);
-    throw new ApiError(500, 'Error occur while getting uncertain list.');
+    throw new ApiError(507, 'Error occur while getting uncertain list.');
+  }
+};
+
+const truncateTable = async () => {
+  try {
+    const queryString = 'delete from validation_result;';
+    const query = db.query(queryString);
+    await query;
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(508, 'Error occur while truncate table.');
   }
 };
 
@@ -118,4 +129,5 @@ export {
   createNewTransaction,
   updateActualResultByImageId,
   getUncertainList,
+  truncateTable,
 };
