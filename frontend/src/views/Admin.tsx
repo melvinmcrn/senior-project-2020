@@ -61,23 +61,30 @@ const Admin: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const data = images
-      .filter(
-        (item) =>
-          item.status !== "UNCERTAIN" &&
-          (item.status === "PASS" || item.status === "BAN")
-      )
-      .map((item) => {
-        return {
-          imageId: item.imageId,
-          status: item.status,
-        };
-      });
-    if (data.length <= 0) {
-      return;
+    try {
+      setIsLoading(true);
+      const data = images
+        .filter(
+          (item) =>
+            item.status !== "UNCERTAIN" &&
+            (item.status === "PASS" || item.status === "BAN")
+        )
+        .map((item) => {
+          return {
+            imageId: item.imageId,
+            status: item.status,
+          };
+        });
+      if (data.length <= 0) {
+        return;
+      }
+      await updateUncertainImage(data);
+      await fetchImages();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    await updateUncertainImage(data);
-    fetchImages();
   };
 
   useEffect(() => {
@@ -91,13 +98,13 @@ const Admin: React.FC = () => {
           <h3>Admin</h3>
         </Col>
       </Row>
-      {alertMessage ? (
+      {alertMessage && (
         <Row>
           <Col>
             <Alert variant="danger">{alertMessage}</Alert>
           </Col>
         </Row>
-      ) : null}
+      )}
       {isLoading ? (
         <Row>
           <Col>

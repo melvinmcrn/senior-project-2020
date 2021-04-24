@@ -12,11 +12,17 @@ function App() {
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="/">Senior Project Demo</Navbar.Brand>
-        <Nav className="mr-auto">
-          <Nav.Link href="/">Validation</Nav.Link>
-          <Nav.Link href="/result">Result</Nav.Link>
-          <Nav.Link href="/admin">Admin</Nav.Link>
+        <Navbar.Brand href="/">Prohibited Product Detection</Navbar.Brand>
+        <Nav className="mr-auto" activeKey={window.location.pathname}>
+          <Nav.Link key="/" href="/">
+            Validation
+          </Nav.Link>
+          <Nav.Link key="/result" href="/result">
+            Result
+          </Nav.Link>
+          <Nav.Link key="/admin" href="/admin">
+            Admin
+          </Nav.Link>
         </Nav>
       </Navbar>
       <Container fluid>
